@@ -5,6 +5,7 @@
         static void Main(string[] args)
         {
             var jatek = new AJatek();
+            jatek.BeSzavak("markak.txt");
             jatek.HelyesTalalat += (szo) => Console.WriteLine("Helyes! Jelenlegi szó: " + szo);
             jatek.HelytelenTalalat += (maradekProba) => Console.WriteLine("Nem jó! Maradék próbálkozások: " + maradekProba);
             jatek.JatekVege += (szo, nyert) =>
@@ -27,6 +28,6 @@
                     break;
                 }
             }
-    }
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace Akasztofa
     public delegate void JatekVegeDelegate(string szo, bool nyert);
     public class AJatek
     {
-        private Szo jelenlegiSzo;
+        private List<Szo> markak;
         private int maxProba = 3;
         public event TippDelegate HelyesTalalat;
         public event RosszTippDelegate HelytelenTalalat;
@@ -19,18 +19,34 @@ namespace Akasztofa
 
         public AJatek()
         {
-            UjraJatek();
+            markak = new List<Szo>();
         }
-
-        private void UjraJatek()
+        public void BeSzavak(string filePath)
         {
-            string[] Szotar = { "FERRARI", "MERCEDES", "FORD", "OPEL", "BMW" };
-            Random rnd = new Random();
-            jelenlegiSzo = new Szo(Szotar[rnd.Next(Szotar.Length)]);
+            try
+            {
+                var fileContent = File.ReadAllText(filePath);
+                var wordArray = fileContent.Split(',');
+                foreach(var word in wordArray)
+                {
+                    markak.Add(new Szo(word.Trim()));
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Nem lehet kiolvasni a szavakat: " + e.Message);
+            }
         }
 
         public void Jatek()
         {
+            if(markak.Count == 0)
+            {
+                Console.WriteLine("Nincsenek beolvasható szavak.");
+                return;
+            }
+
+            var jelenlegiSzo = markak[new Random().Next(markak.Count)]; 
             Console.WriteLine("Találd ki a helyes autó márkát: " + jelenlegiSzo);
             int proba = 0;
             while (proba < maxProba && !jelenlegiSzo.Kesz())
@@ -62,8 +78,6 @@ namespace Akasztofa
 
             bool nyert = jelenlegiSzo.Kesz();
             JatekVege?.Invoke(jelenlegiSzo.Ertek, nyert);
-
-            UjraJatek();
         }
     }
 }
